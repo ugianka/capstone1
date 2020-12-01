@@ -165,6 +165,8 @@ def model_predict(country, year, month, day, all_models=None, test=False, data_d
             training=False, data_dir=data_dir, model_dir=model_dir)
 
     # input checks
+    print('all_models.keys', all_models.keys())
+    print('country:', country)
     if country not in all_models.keys():
         raise Exception(
             "ERROR (model_predict) - model for country '{}' could not be found".format(country))
@@ -310,7 +312,7 @@ class TestModelPredict(unittest.TestCase):
         if not exists(ukmodelfile):
             model_train(data_dir=data_dir, model_dir=models_dir, test=False,
                         force_data_load=force_data_load)
-        pred = model_predict('united_kingodom', 2018, 1, 1, data_dir=data_dir,
+        pred = model_predict('united_kingdom', '2018', '1', '1', data_dir=data_dir,
                              model_dir=models_dir, test=True)
         print(pred)
         return pred['y_pred'] > 0

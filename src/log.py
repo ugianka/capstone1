@@ -15,7 +15,10 @@ def update_predict_log(country, y_pred, y_proba, target_date, runtime, MODEL_VER
     update predict log file
     """
     today = dt.datetime.now()
+
     log_dir = join('.', 'logs')
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
     log_file_path = join(
         log_dir, 'revenue_pred_-{}-{}-{}.log').format(today.year, today.month, today.day)
     # name the logfile using something that cycles with date (day, month, year)
