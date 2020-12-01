@@ -1,7 +1,7 @@
 # AAVAIL revenue predictor service
 
-## installation 
-### install in docker
+# installation 
+## install in docker
 There is a dockerfile on the root of the project to create the docker image.
 Be sure to have docker running on your machine.
 Then execute from the root directory:
@@ -36,6 +36,9 @@ be97439e4684        aavail_predict:1.0.9   "./start-server.sh"   5 seconds ago  
 
 # Service interface
 
+These are the path of the different services
+
+
 |  path   |  message  | parameters| description |
 |:-------|:---------:|:---------:|:-----------|
 |  /train | GET       | none      | train all the models in production mode | 
@@ -53,9 +56,36 @@ predict_params are:
 | month | the month of the date |
 | day | the day of the date |
 
-for example if we want the prediction of the revenue for november 2018 for the country United Kingdom:
 
+
+### example of train
+this will train all models for the top 10 countries
+
+```
+curl -X GET http://127.0.0.1/train
+```
+
+### example of prediction
+
+for example if we want the prediction of the revenue for november 2018 for the country United Kingdom:
 ```
 curl -X GET http://127.0.0.1/predict?country=united_kingdom&year=2018&month=10&day=31
 ```
 
+### example of log fetch
+
+this will retrieve all the prediction logs for the day: 2018-01-01
+
+```
+curl -X GET http://127.0.0.1/getLog?type=pred&year=2018&month=10&day=31
+```
+
+# Unit Tests
+
+Unit Tests are runned by the  unit_test.sh shell in the root directory.
+Once you have run the application in a docker container you can execute unit tests with the command:
+```
+docker exec -ti <container-name> /usr/src/aavail_predict/unit_test.sh
+```
+
+where \<container-name> is the name or the id of the container running the application
