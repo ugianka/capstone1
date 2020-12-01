@@ -1,0 +1,5 @@
+data/work-data/
+models/
+logs/
+.vscode/
+__pycache__/
