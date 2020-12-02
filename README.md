@@ -1,6 +1,6 @@
-# AAVAIL revenue predictor service
 
-# installation 
+# <span style="color:rgba(255,150,0,1);"> AAVAIL revenue predictor service</span>
+# <span style="color:rgba(255,150,0,1);"> installation</span> 
 ## install in docker
 There is a dockerfile on the root of the project to create the docker image.
 Be sure to have docker running on your machine.
@@ -8,7 +8,7 @@ Then execute from the root directory:
 ```
 docker build -t <image-name> .
 ```
-this will create an image with name \<image-name> in your doxcker registry.
+this will create an image with name \<image-name> in your docker registry.
 
 To run the image type:
 ```
@@ -16,9 +16,10 @@ docker run -d -p 5000:5000 --name <container-name> <image-name>
 ```
 \<container-name> is the name you want to give to the container.
 
-The --name \<aname> parameter is optional if you don't specify docker will create a name for the container.
+The --name \<aname> parameter is optional if you don't specify it docker will create a name for the container.
 
 The -p 5000:5000 will create a NAT in your machine on port 5000 to the port 5000 of the container. You will be able to send requests to the flask server in the container addressing your machine like this for example:
+
 ```
 curl -X GET  http://127.0.0.1:5000/train
 ```
@@ -36,7 +37,8 @@ be97439e4684        aavail_predict:1.0.9   "./start-server.sh"   5 seconds ago  
 
 # Service interface
 
-These are the path of the different services, all services accept GET method and receive all parameters in query string
+These are the path of the different services, all services accept **GET** method and receive all parameters in **query string**
+
 
 
 |  path   |  message  | parameters| description |
