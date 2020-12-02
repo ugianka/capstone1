@@ -7,7 +7,28 @@ import uuid
 
 # update log
 def update_train_log(startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERSION_NOTE, test=True):
-    print('hello')
+    # name the logfile using something that cycles with date (day, month, year)
+    today = dt.datetime.today()
+    if test:
+        logfile = os.path.join("logs", "train-test.log")
+    else:
+        logfile = os.path.join(
+            "logs", "train-{}-{}.log".format(today.year, today.month))
+
+    # write the data to a csv file
+    header = ['unique_id', 'timestamp', 'start_date', 'end_date', 'val,' 'model_version',
+              'model_version_note', 'runtime']
+    write_header = False
+    if not os.path.exists(logfile):
+        write_header = True
+    with open(logfile, 'a') as csvfile:
+        writer = csv.writer(csvfile, delimiter=',')
+        if write_header:
+            writer.writerow(header)
+
+        to_write = map(str, [uuid.uuid4(), today.time(), startDate, endDate, val,
+                             MODEL_VERSION, MODEL_VERSION_NOTE, runtime])
+        writer.writerow(to_write)
 
 
 def update_predict_log(country, y_pred, y_proba, target_date, runtime, MODEL_VERSION, test):

@@ -282,8 +282,8 @@ if __name__ == "__main__":
     print(result)
 
 
-class TestModelTrain(unittest.TestCase):
-    def test_file_creation(self):
+class TestModel(unittest.TestCase):
+    def test_train_file_creation(self):
         data_dir = join('..', 'data')
         work_dir = join(data_dir, 'work-data')
         models_dir = join('..', 'models')
@@ -296,9 +296,7 @@ class TestModelTrain(unittest.TestCase):
         outfile = join(work_dir, 'test-all-0_1')
         return exists(outfile)
 
-
-class TestModelPredict(unittest.TestCase):
-    def test_result_is_numeric(self):
+    def test_predict_result_is_numeric(self):
         data_dir = join('..', 'data')
         models_dir = join('..', 'models')
         work_dir = join(data_dir, 'work-data')

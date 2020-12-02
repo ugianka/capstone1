@@ -5,6 +5,8 @@ from os.path import join
 import json
 import datetime as dt
 import pandas as pd
+import unittest
+
 
 from model import model_predict, model_train
 sys.path.insert(1, './src')
@@ -135,3 +137,12 @@ def log():
     json_object = json.dumps(response, indent=4)
     return Response(str(json_object),
                     mimetype="application/json")
+
+
+class TestServer(unittest.TestCase):
+    def test_train_API(self):
+        request = {}
+        req = request()
+
+        request['args'] = ''
+        trainModel()

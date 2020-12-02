@@ -36,40 +36,61 @@ be97439e4684        aavail_predict:1.0.9   "./start-server.sh"   5 seconds ago  
 
 # Service interface
 
-These are the path of the different services
+These are the path of the different services, all services accept GET method and receive all parameters in query string
 
 
 |  path   |  message  | parameters| description |
 |:-------|:---------:|:---------:|:-----------|
-|  /train | GET       | none      | train all the models in production mode | 
+|  /train | GET       | train_params      | train all the models in production mode | 
 | /predict | GET | predict_params | predict the revenue for the month after the date passed as parameter|
 | /getLog | GET | getlog_params | get the logs for the date passed as parameter
 
 
 where
 
-predict_params are:
+## train_params are:
+| param name| description |
+|:----------|:------------|
+| env   | can be either test or prod if not present env will be set to prod|
+
+## predict_params are:
 | param name| description |
 |:----------|:------------|
 | country   | the name of the country is all lowercase and spaces must be replaced by _ |
 | year      | the year of the date for wich we want the prediction of the revenue of the next month    |
 | month | the month of the date |
 | day | the day of the date |
+| env   | can be either test or prod if not present env will be set to prod|
 
 
 
+## getlog_params are:
+| param name| description |
+|:----------|:------------|
+| type   | either pred for prediction logs or train for train logs |
+| date      | the date in ISO format like 2020-12-01 for December 1st 2020   |
+
+
+# service response
+all services respond with a json. Status code of the http response is always 200 even on failure.
+The field result in the JSON response is 0 if the API has executed without errors -1 otherwise .
+In case of error also the field error is present with a description of the error
+
+
+
+# services invocation examples
 ### example of train
 this will train all models for the top 10 countries
 
 ```
-curl -X GET http://127.0.0.1/train
+curl -X GET http://127.0.0.1:5000/train?env=test
 ```
 
 ### example of prediction
 
 for example if we want the prediction of the revenue for november 2018 for the country United Kingdom:
 ```
-curl -X GET http://127.0.0.1/predict?country=united_kingdom&year=2018&month=10&day=31
+curl -X GET "http://127.0.0.1:5000/predict?country=united_kingdom&year=2018&month=10&day=31"
 ```
 
 ### example of log fetch
@@ -77,7 +98,7 @@ curl -X GET http://127.0.0.1/predict?country=united_kingdom&year=2018&month=10&d
 this will retrieve all the prediction logs for the day: 2018-01-01
 
 ```
-curl -X GET http://127.0.0.1/getLog?type=pred&year=2018&month=10&day=31
+curl -X GET "http://127.0.0.1:5000/getLog?type=pred&date=2020-12-01"
 ```
 
 # Unit Tests
