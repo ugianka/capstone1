@@ -43,7 +43,7 @@ def ingestTrainData(data_path):
 
     # for each of the training Json files paths
     for idx, fname in enumerate(onlyfiles):
-        print('loading input file:', fname)
+        # print('loading input file:', fname)
 
         # read the contents in a dataframe
         # print('reading json from: ', fname)
@@ -127,7 +127,7 @@ def getAllTS(aDf, output_directory_path):
     for country, ts in data.items():
         country_id = re.sub("\s+", "_", country.lower())
         ts.to_csv(os.path.join(output_directory_path,
-                               'ts-data-'+country_id+'.csv'))
+                               'ts-data-' + country_id + '.csv'))
     return data
 
 

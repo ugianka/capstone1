@@ -1,7 +1,8 @@
 
-# <span style="color:rgba(255,150,0,1);"> AAVAIL revenue predictor service</span>
-# <span style="color:rgba(255,150,0,1);"> installation</span> 
+# AAVAIL revenue predictor service
+# installation 
 ## install in docker
+
 There is a dockerfile on the root of the project to create the docker image.
 Be sure to have docker running on your machine.
 Then execute from the root directory:
@@ -100,7 +101,7 @@ curl -X GET "http://127.0.0.1:5000/predict?country=united_kingdom&year=2018&mont
 this will retrieve all the prediction logs for the day: 2018-01-01
 
 ```
-curl -X GET "http://127.0.0.1:5000/getLog?type=pred&date=2020-12-01"
+curl -X GET "http://127.0.0.1:5000/getLog?type=pred&date=2020-12-01&env=test"
 ```
 
 # Unit Tests
@@ -112,3 +113,20 @@ docker exec -ti <container-name> /usr/src/aavail_predict/unit_test.sh
 ```
 
 where \<container-name> is the name or the id of the container running the application
+
+# performance monitoring
+
+Performances monitoring is done through the script:
+```
+./start_momitoring.sh
+```
+that is placed on the root directory of the project.
+This execute the python file monitoring.py that creates in monitor directory :
+```
+monitor_statistics.csv
+```
+which is a csv that contains for each day the monitor has run the mean squared error of the prediction of the 30 mext days for each date in the train data with respect to the actual revenues. As the train data will be populated and the model retrained a comparison of this mse could be done.
+
+It creates also a csv file for each day the monitor is run that contains the detail of the prediction and the actual 30 days revenues and their difference.
+
+It ctreates also an image of the distribution of the differences between predictions and actual.

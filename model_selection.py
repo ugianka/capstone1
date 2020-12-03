@@ -30,15 +30,6 @@ def trainClf(clf, param_grid_rf):
 
     X, y, dates = engineer_features(data['united_kingdom'])
 
-    # if test:
-    #     n_samples = int(np.round(0.3 * X.shape[0]))
-    #     subset_indices = np.random.choice(np.arange(X.shape[0]), n_samples,
-    #                                       replace=False).astype(int)
-    #     mask = np.in1d(np.arange(y.size), subset_indices)
-    #     y = y[mask]
-    #     X = X[mask]
-    #     dates = dates[mask]
-
     # Perform a train-test split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25,
                                                         shuffle=True, random_state=42)

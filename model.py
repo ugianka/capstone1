@@ -70,8 +70,11 @@ def _model_train(df, tag, model_dir=None, test=False):
     pipe_rf = Pipeline(steps=[('scaler', StandardScaler()),
                               ('rf', RandomForestRegressor())])
 
+    # grid = GridSearchCV(pipe_rf, param_grid=param_grid_rf,
+    #                     cv=5, iid=False, n_jobs=-1)
+
     grid = GridSearchCV(pipe_rf, param_grid=param_grid_rf,
-                        cv=5, iid=False, n_jobs=-1)
+                        cv=5, n_jobs=-1)
     grid.fit(X_train, y_train)
     y_pred = grid.predict(X_test)
     eval_rmse = round(np.sqrt(mean_squared_error(y_test, y_pred)))
@@ -90,13 +93,13 @@ def _model_train(df, tag, model_dir=None, test=False):
 
     joblib.dump(grid, saved_model)
 
-    m, s = divmod(time.time()-time_start, 60)
+    m, s = divmod(time.time() - time_start, 60)
     h, m = divmod(m, 60)
     runtime = "%03d:%02d:%02d" % (h, m, s)
 
     # update log
     update_train_log(tag, (str(dates[0]), str(dates[-1])), {'rmse': eval_rmse}, runtime,
-                     MODEL_VERSION, MODEL_VERSION_NOTE, test=True)
+                     MODEL_VERSION, MODEL_VERSION_NOTE, test=test)
 
 
 def model_train(data_dir, test=False, model_dir=None, force_data_load=True):
@@ -116,13 +119,11 @@ def model_train(data_dir, test=False, model_dir=None, force_data_load=True):
         os.mkdir(MODEL_DIR)
 
     if test:
-        print("... test flag on")
-        print("...... subseting data")
-        print("...... subseting countries")
+        print("running training in test mode only uk will be trained")
 
     idf = pd.DataFrame()
     if(force_data_load):
-        print('loading data from ', inp_dir)
+        # print('loading data from ', inp_dir)
         idf = ingestTrainData(inp_dir)
     else:
         train_path = os.path.join(work_dir, 'train-data-cleaned.csv')
@@ -140,12 +141,12 @@ def model_train(data_dir, test=False, model_dir=None, force_data_load=True):
         _model_train(df, country, model_dir=model_dir, test=test)
 
 
-def model_predict(country, year, month, day, all_models=None, test=False, data_dir=None, model_dir=None):
+def model_predict(country, year, month, day, all_models=None, all_data=None, test=False, data_dir=None, model_dir=None):
     """
     example funtion to predict from model
     """
 
-    print('model directory: ', model_dir)
+    # print('model directory: ', model_dir)
 
     if not data_dir:
         data_dir = join('.', 'data')
@@ -156,17 +157,14 @@ def model_predict(country, year, month, day, all_models=None, test=False, data_d
     # start timer for runtime
     time_start = time.time()
 
-    all_models = {}
-    all_data = {}
-
     # load model if needed
     if not all_models:
         all_data, all_models = model_load(
-            training=False, data_dir=data_dir, model_dir=model_dir)
+            training=False, data_dir=data_dir, model_dir=model_dir, test=test)
 
     # input checks
-    print('all_models.keys', all_models.keys())
-    print('country:', country)
+    # print('all_models.keys', all_models.keys())
+    # print('country:', country)
     if country not in all_models.keys():
         raise Exception(
             "ERROR (model_predict) - model for country '{}' could not be found".format(country))
@@ -183,7 +181,7 @@ def model_predict(country, year, month, day, all_models=None, test=False, data_d
     # check date
     target_date = "{}-{}-{}".format(year,
                                     str(month).zfill(2), str(day).zfill(2))
-    print(target_date)
+    # print(target_date)
 
     if target_date not in data['dates']:
         raise Exception("ERROR (model_predict) - date {} not in range {}-{}".format(target_date,
@@ -203,7 +201,7 @@ def model_predict(country, year, month, day, all_models=None, test=False, data_d
         if model.probability == True:
             y_proba = model.predict_proba(query)
 
-    m, s = divmod(time.time()-time_start, 60)
+    m, s = divmod(time.time() - time_start, 60)
     h, m = divmod(m, 60)
     runtime = "%03d:%02d:%02d" % (h, m, s)
 
@@ -214,7 +212,7 @@ def model_predict(country, year, month, day, all_models=None, test=False, data_d
     return({'y_pred': y_pred, 'y_proba': y_proba})
 
 
-def model_load(prefix='sl', data_dir=None, model_dir=None, training=True):
+def model_load(prefix='sl', data_dir=None, model_dir=None, training=True, test=False):
     """
     example funtion to load model
 
@@ -230,9 +228,13 @@ def model_load(prefix='sl', data_dir=None, model_dir=None, training=True):
     inp_dir = os.path.join(data_dir, "cs-train")
     work_dir = os.path.join(data_dir, "work-data")
 
-    print('seraching models in: '+model_dir)
-    models = [f for f in os.listdir(model_dir) if re.search("sl", f)]
-    print('models loaded: ', models)
+    # print('seraching models in: ' + model_dir)
+
+    prefix = "sl"
+    if(test):
+        prefix = "test"
+    models = [f for f in os.listdir(model_dir) if re.search(prefix, f)]
+    # print('models loaded: ', models)
 
     if len(models) == 0:
         raise Exception(
@@ -280,37 +282,3 @@ if __name__ == "__main__":
     day = '05'
     result = model_predict(country, year, month, day)
     print(result)
-
-
-class TestModel(unittest.TestCase):
-    def test_train_file_creation(self):
-        data_dir = join('..', 'data')
-        work_dir = join(data_dir, 'work-data')
-        models_dir = join('..', 'models')
-        inpfile = join(work_dir, 'train-data-cleaned.csv')
-        force_data_load = True
-        if exists(inpfile):
-            force_data_load = False
-        model_train(data_dir=data_dir, test=True, model_dir=models_dir,
-                    force_data_load=force_data_load)
-        outfile = join(work_dir, 'test-all-0_1')
-        return exists(outfile)
-
-    def test_predict_result_is_numeric(self):
-        data_dir = join('..', 'data')
-        models_dir = join('..', 'models')
-        work_dir = join(data_dir, 'work-data')
-        inpfile = join(work_dir, 'train-data-cleaned.csv')
-        force_data_load = True
-        if exists(inpfile):
-            force_data_load = False
-
-        ukmodelfile = join(models_dir, 'sl-united_kingdom-' +
-                           MODEL_VERSION+'.joblib')
-        if not exists(ukmodelfile):
-            model_train(data_dir=data_dir, model_dir=models_dir, test=False,
-                        force_data_load=force_data_load)
-        pred = model_predict('united_kingdom', '2018', '1', '1', data_dir=data_dir,
-                             model_dir=models_dir, test=True)
-        print(pred)
-        return pred['y_pred'] > 0

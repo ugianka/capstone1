@@ -69,11 +69,23 @@ def hello_world():
 
 @app.route('/train')
 def trainModel():
-    model_train(data_dir, test=False)
-    answer = {
-        'result': 'ok'
+    response = {
+        'result': -1
     }
-    return Response(answer,
+
+    try:
+        test = False
+        env = request.args.get('env')
+        if (env == 'test'):
+            test = True
+
+        model_train(data_dir, test=test)
+        response['result'] = 0
+    except:
+        response['error'] = 'system error:' + str(sys.exc_info()[1])
+
+    json_object = json.dumps(response, indent=4)
+    return Response(str(json_object),
                     mimetype="application/json")
 
 
@@ -100,7 +112,7 @@ def predict():
         print('response: \n', response)
 
     except:
-        response['error'] = 'system error:'+str(sys.exc_info()[1])
+        response['error'] = 'system error:' + str(sys.exc_info()[1])
     json_object = json.dumps(response, indent=4)
     return Response(str(json_object),
                     mimetype="application/json")
@@ -112,9 +124,13 @@ def log():
         'result': -1
     }
     try:
+        test = False
         date = request.args.get('date')
         today = dt.date.fromisoformat(date)
         logtype = request.args.get('type')
+        env = request.args.get('env')
+        if env == 'test':
+            test = True
         log_dir = join('.', 'logs')
 
         if logtype and logtype in ['pred', 'train']:
@@ -122,18 +138,22 @@ def log():
         else:
             raise Exception(
                 "ERROR (fetch logs) - type must be either pred or train")
+        test_suffix = ''
+        if test:
+            test_suffix = '-test'
         log_file_path = join(
-            log_dir, 'revenue_{}_-{}-{}-{}.log').format(logtype, today.year, today.month, today.day)
+            log_dir, '{}{}-{}-{}-{}.log').format(logtype, test_suffix, today.year, today.month, today.day)
 
         if not os.path.exists(log_file_path):
-            Exception(
-                "ERROR (fetch logs) - no log files present for the date")
-        df = pd.read_csv(log_file_path)
-        response['result'] = 0
-        response['data'] = df.to_dict(orient='records')
+            response['result'] = 0
+            response['data'] = []
+        else:
+            df = pd.read_csv(log_file_path)
+            response['result'] = 0
+            response['data'] = df.to_dict(orient='records')
 
     except:
-        response['error'] = 'system error:'+str(sys.exc_info()[1])
+        response['error'] = 'system error:' + str(sys.exc_info()[1])
     json_object = json.dumps(response, indent=4)
     return Response(str(json_object),
                     mimetype="application/json")

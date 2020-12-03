@@ -1,5 +1,7 @@
 data/work-data/
 models/
+monitor/
 logs/
 .vscode/
 __pycache__/
+*.pyc 

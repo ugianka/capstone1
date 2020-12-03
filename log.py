@@ -10,10 +10,10 @@ def update_train_log(startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERS
     # name the logfile using something that cycles with date (day, month, year)
     today = dt.datetime.today()
     if test:
-        logfile = os.path.join("logs", "train-test.log")
+        logfile = os.path.join("logs", "train-test-{}-{}-{}.log".format(today.year, today.month, today.day))
     else:
         logfile = os.path.join(
-            "logs", "train-{}-{}.log".format(today.year, today.month))
+            "logs", "train-{}-{}-{}.log".format(today.year, today.month, today.day))
 
     # write the data to a csv file
     header = ['unique_id', 'timestamp', 'start_date', 'end_date', 'val,' 'model_version',
@@ -40,8 +40,14 @@ def update_predict_log(country, y_pred, y_proba, target_date, runtime, MODEL_VER
     log_dir = join('.', 'logs')
     if not os.path.exists(log_dir):
         os.mkdir(log_dir)
-    log_file_path = join(
-        log_dir, 'revenue_pred_-{}-{}-{}.log').format(today.year, today.month, today.day)
+    if test:
+        log_file_path = os.path.join(log_dir, "pred-test-{}-{}-{}.log").format(today.year, today.month, today.day)
+    else:
+        log_file_path = os.path.join(
+            log_dir, "pred-{}-{}-{}.log".format(today.year, today.month, today.day))
+
+    # log_file_path = join(
+    #     log_dir, 'pred-{}-{}-{}.log').format(today.year, today.month, today.day)
     # name the logfile using something that cycles with date (day, month, year)
 
     # write the data to a csv file
