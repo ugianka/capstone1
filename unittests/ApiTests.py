@@ -44,7 +44,7 @@ class ApiTest(unittest.TestCase):
 
         # request_json = {'mode': 'test'}
         r = requests.get('http://127.0.0.1:{}/train?env=test'.format(port))
-        print('train API result:', r.text)
+        # print('train API result:', r.text)
         jresp = json.loads(r.text)
         rc = jresp['result']
         self.assertEqual(rc, 0)
@@ -52,24 +52,28 @@ class ApiTest(unittest.TestCase):
     @unittest.skipUnless(server_available, "local server is not running")
     def test_02_predict_empty(self):
         """
-        ensure appropriate failure types
+        check that predict with no input returns error
         """
-
         # provide no data at all
         r = requests.get('http://127.0.0.1:{}/predict'.format(port))
         self.assertEqual(r.status_code, 200)
-        print('predict no data response: ', r.text)
+        # print('predict no data response: ', r.text)
         jresp = json.loads(r.text)
         rc = jresp['result']
         self.assertEqual(rc, -1)
 
-        query_string = 'country=united_kingdom&year=2019&month=10&day=20'
+    @unittest.skipUnless(server_available, "local server is not running")
+    def test_03_predict_not_empty(self):
+        """
+        check that predict works
+        """
+        query_string = 'country=united_kingdom&year=2018&month=10&day=20'
         r = requests.get('http://127.0.0.1:{}/predict?{}'.format(port, query_string))
         self.assertEqual(r.status_code, 200)
         print('predict with data: ', r.text)
         jresp = json.loads(r.text)
         rc = jresp['result']
-        y_pred = jresp['y_pred']
+        y_pred = jresp['prediction']
         self.assertEqual(rc, 0)
         self.assertTrue(len(y_pred) > 0)
         self.assertTrue(y_pred[0] >= 0)
@@ -77,18 +81,16 @@ class ApiTest(unittest.TestCase):
     @unittest.skipUnless(server_available, "local server is not running")
     def test_04_logs(self):
         """
-        test the log functionality
+        check that logs are returned from log API
         """
-
         file_name = 'train-test.log'
         request_json = {'file': 'train-test.log'}
 
         today = dt.datetime.now()
         isodate = today.strftime('%Y-%m-%d')
         query_string = 'type=train&env=test&date={}'.format(isodate)
-        r = requests.get('http://127.0.0.1:{}/getLogs?{}'.format(port, query_string))
-
-        resj = r.json
+        r = requests.get('http://127.0.0.1:{}/getLog?{}'.format(port, query_string))
+        resj = json.loads(r.text)
         self.assertTrue(resj['result'] >= 0)
 
 

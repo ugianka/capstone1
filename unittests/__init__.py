@@ -4,6 +4,7 @@ import unittest
 import getopt
 import sys
 import os
+from unittests.LogTests import LogTest
 
 
 # parse inputs
@@ -25,14 +26,20 @@ for o, a in optlist:
         VERBOSE = True
 
 
-# api tests
+# # api tests
 from ApiTests import *
 ApiTestSuite = unittest.TestLoader().loadTestsFromTestCase(ApiTest)
 
 
-# api tests
+# # api tests
 from ModelTests import *
 ModelTestSuite = unittest.TestLoader().loadTestsFromTestCase(ModelTest)
 
 
-MainSuite = unittest.TestSuite([ModelTestSuite, ApiTestSuite])
+# api tests
+from LogTests import *
+LogTestSuite = unittest.TestLoader().loadTestsFromTestCase(LogTest)
+
+
+# MainSuite = unittest.TestSuite([ApiTestSuite, ModelTestSuite, LogTestSuite])
+MainSuite = unittest.TestSuite([LogTestSuite, ApiTestSuite, ModelTestSuite])

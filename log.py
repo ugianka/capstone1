@@ -6,7 +6,7 @@ import uuid
 
 
 # update log
-def update_train_log(startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERSION_NOTE, test=True):
+def update_train_log(country, startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERSION_NOTE, test=True):
     # name the logfile using something that cycles with date (day, month, year)
     today = dt.datetime.today()
     if test:
@@ -16,8 +16,8 @@ def update_train_log(startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERS
             "logs", "train-{}-{}-{}.log".format(today.year, today.month, today.day))
 
     # write the data to a csv file
-    header = ['unique_id', 'timestamp', 'start_date', 'end_date', 'val,' 'model_version',
-              'model_version_note', 'runtime']
+    header = ['unique_id', 'timestamp', 'start_date', 'end_date', 'country', 'runtime', 'error', 'model_version',
+              'model_version_note']
     write_header = False
     if not os.path.exists(logfile):
         write_header = True
@@ -26,8 +26,9 @@ def update_train_log(startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERS
         if write_header:
             writer.writerow(header)
 
-        to_write = map(str, [uuid.uuid4(), today.time(), startDate, endDate, val,
-                             MODEL_VERSION, MODEL_VERSION_NOTE, runtime])
+        to_write = map(str, [uuid.uuid4(), str(today), startDate, endDate, country, runtime, val,
+                             MODEL_VERSION, MODEL_VERSION_NOTE])
+        print(to_write)
         writer.writerow(to_write)
 
 

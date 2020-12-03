@@ -1,5 +1,3 @@
-#!/bin/bash
+#!/bin/sh
 
-cd src
-python -m unittest model
- 
+python run_test.py

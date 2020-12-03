@@ -98,8 +98,8 @@ def _model_train(df, tag, model_dir=None, test=False):
     runtime = "%03d:%02d:%02d" % (h, m, s)
 
     # update log
-    update_train_log(tag, (str(dates[0]), str(dates[-1])), {'rmse': eval_rmse}, runtime,
-                     MODEL_VERSION, MODEL_VERSION_NOTE, test=test)
+    update_train_log(country=tag, startDate=str(dates[0]), endDate=str(dates[-1]), val={'rmse': eval_rmse}, runtime=runtime,
+                     MODEL_VERSION=MODEL_VERSION, MODEL_VERSION_NOTE=MODEL_VERSION_NOTE, test=test)
 
 
 def model_train(data_dir, test=False, model_dir=None, force_data_load=True):
