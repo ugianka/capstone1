@@ -245,6 +245,12 @@ def model_load(prefix='sl', data_dir=None, model_dir=None, training=True, test=F
         all_models[re.split("-", model)[1]
                    ] = joblib.load(os.path.join(model_dir, model))
 
+    all_data = load_data(inp_dir=inp_dir, work_dir=work_dir, training=training)
+
+    return(all_data, all_models)
+
+
+def load_data(inp_dir=None, work_dir=None, training=None):
     # load data
     idf = ingestTrainData(inp_dir)
     ts_data = getAllTS(idf, work_dir)
@@ -253,8 +259,7 @@ def model_load(prefix='sl', data_dir=None, model_dir=None, training=True, test=F
         X, y, dates = engineer_features(df, training=training)
         dates = np.array([str(d) for d in dates])
         all_data[country] = {"X": X, "y": y, "dates": dates}
-
-    return(all_data, all_models)
+    return all_data
 
 
 if __name__ == "__main__":

@@ -37,6 +37,7 @@ class ModelTest(unittest.TestCase):
         if not exists(ukmodelfile):
             model_train(data_dir=data_dir, model_dir=models_dir, test=True,
                         force_data_load=force_data_load)
+
         pred = model_predict('united_kingdom', '2018', '1', '1', data_dir=data_dir,
                              model_dir=models_dir, test=True)
         # print(pred)

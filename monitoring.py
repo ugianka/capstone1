@@ -5,7 +5,7 @@ from os.path import join, exists
 import pandas as pd
 from data_ingestion import getTimeSeries, ingestTrainData
 from features_extraction import engineer_features
-from model import model_predict, model_load
+from model import model_predict, model_load, load_data
 import sys
 import datetime as dt
 import matplotlib
@@ -16,6 +16,7 @@ from sklearn.metrics import mean_squared_error
 
 
 def monitoring():
+
     # load time series
     data_dir = join('.', 'data')
     model_dir = join('.', 'models')

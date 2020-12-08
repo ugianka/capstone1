@@ -1,6 +1,9 @@
 
 # AAVAIL revenue predictor service
-# installation 
+
+# Presentations
+The EDA and model selection presentations are in the presentations directory under the project root directory
+# Installation 
 ## install in docker
 
 There is a dockerfile on the root of the project to create the docker image.
