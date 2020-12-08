@@ -96,12 +96,12 @@ curl -X GET http://127.0.0.1:5000/train?env=test
 
 for example if we want the prediction of the revenue for november 2018 for the country United Kingdom:
 ```
-curl -X GET "http://127.0.0.1:5000/predict?country=united_kingdom&year=2018&month=10&day=31"
+curl -X GET "http://127.0.0.1:5000/predict?country=united_kingdom&year=2018&month=10&day=31&env=test"
 ```
 
 ### example of log fetch
 
-this will retrieve all the prediction logs for the day: 2018-01-01
+this will retrieve all the prediction logs for the day: 2018-01-01. The date is relative to the day in which operations (predict or train) have been done .
 
 ```
 curl -X GET "http://127.0.0.1:5000/getLog?type=pred&date=2020-12-01&env=test"
