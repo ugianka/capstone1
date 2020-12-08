@@ -67,7 +67,7 @@ class ApiTest(unittest.TestCase):
         """
         check that predict works
         """
-        query_string = 'country=united_kingdom&year=2018&month=10&day=20'
+        query_string = 'country=united_kingdom&year=2018&month=10&day=20&env=test'
         r = requests.get('http://127.0.0.1:{}/predict?{}'.format(port, query_string))
         self.assertEqual(r.status_code, 200)
         print('predict with data: ', r.text)
