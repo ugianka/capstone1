@@ -8,9 +8,14 @@ import uuid
 # update log
 def update_train_log(country, startDate, endDate, val, runtime, MODEL_VERSION, MODEL_VERSION_NOTE, test=True):
     # name the logfile using something that cycles with date (day, month, year)
+
+    log_dir = join('.', 'logs')
+    if not os.path.exists(log_dir):
+        os.mkdir(log_dir)
+
     today = dt.datetime.today()
     if test:
-        logfile = os.path.join("logs", "train-test-{}-{}-{}.log".format(today.year, today.month, today.day))
+        logfile = os.path.join(log_dir, "train-test-{}-{}-{}.log".format(today.year, today.month, today.day))
     else:
         logfile = os.path.join(
             "logs", "train-{}-{}-{}.log".format(today.year, today.month, today.day))
