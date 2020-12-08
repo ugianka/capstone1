@@ -99,7 +99,8 @@ def predict():
         year = request.args.get('year')
         month = request.args.get('month')
         day = request.args.get('day')
-        res = model_predict(country, year, month, day)
+        env = request.args.get('env')
+        res = model_predict(country, year, month, day, test=(env == 'test'))
 
         # text = '<h1 style="color:blue;">result'+str(res)+'</h1>'
         # print('type(res: ', type(res))
